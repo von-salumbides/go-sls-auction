@@ -27,7 +27,7 @@ pipeline {
                 println('Deploying')
                 script {
                     if ( SLS_ACTION == 'deploy' ) {
-                    sh "make deploy"
+                        sh "make deploy"
                     } else if ( SLS_ACTION == 'remove' ){
                         sh "make remove"
                     } else {

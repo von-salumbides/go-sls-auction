@@ -16,7 +16,13 @@ pipeline {
         stage('DEPLOY'){
             steps {
                 println('Deploying')
-                sh "aws s3 ls"
+                if ( SLS_ACTION == "deploy"  ) {
+                    sh "make deploy"
+                } else if ( SLS_ACTION == "remove" ){
+                    sh "make remove"
+                } else {
+                    error("Build Failed, ${SLS_ACTION} is not defined")
+                }
             }
         }
     }

@@ -1,5 +1,14 @@
 pipeline {
     agent any
+    tools {
+        go 'go-1.18'
+    }
+    environment {
+        GO111MODULE = 'on'
+        GOOS = 'linux'
+        GOARCH = 'amd64'
+        CGO_ENABLED = '0' 
+    }
     stages {
         stage('Switch Environment') {
             steps {

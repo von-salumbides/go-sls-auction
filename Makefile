@@ -1,4 +1,4 @@
-.PHONY: build clean deploy remove
+.PHONY: build clean deploy
 environment = $(DEPLOY_ENV)
 build:
 	env GOARCH=amd64 GOOS=linux go build -ldflags="-s -w" -o bin/hello hello/main.go

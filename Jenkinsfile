@@ -16,9 +16,9 @@ pipeline {
         stage('DEPLOY'){
             steps {
                 println('Deploying')
-                if ( SLS_ACTION == "deploy"  ) {
+                if ( env.SLS_ACTION == "deploy"  ) {
                     sh "make deploy"
-                } else if ( SLS_ACTION == "remove" ){
+                } else if ( env.SLS_ACTION == "remove" ){
                     sh "make remove"
                 } else {
                     error("Build Failed, ${SLS_ACTION} is not defined")

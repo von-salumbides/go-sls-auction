@@ -1,0 +1,24 @@
+service: go-sls-auction
+frameworkVersion: '3'
+provider:
+  name: aws
+  runtime: go1.x
+  stage: ${opt:stage, 'dev'}
+  region: us-east-2
+
+# you can define service wide environment variables here
+#  environment:
+#    variable1: value1
+
+package:
+  patterns:
+    - '!./**'
+    - ./bin/**
+
+functions:
+  hello:
+    handler: bin/hello
+    events:
+      - httpApi:
+          path: /hello
+          method: get

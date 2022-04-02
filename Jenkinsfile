@@ -22,7 +22,7 @@ pipeline {
                 }
             }
         }
-        stage('DEPLOY'){
+        stage('Deploy'){
             steps {
                 println('Deploying')
                 script {

@@ -33,8 +33,7 @@ func ParseResponse(respString string) []byte {
 
 // Handler is our lambda handler invoked by the `lambda.Start` function call
 func Handler(event events.APIGatewayV2HTTPRequest) (Response, error) {
-	l, _ := zap.NewProduction()
-	defer l.Sync()
+	l := zap.L()
 	l.Info("event received", zap.Any("method", event.RequestContext.HTTP.Method), zap.Any("path", event.RequestContext.HTTP.Path), zap.Any("body", event.Body))
 
 	respBody := ParseResponse(event.Body)

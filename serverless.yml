@@ -17,9 +17,9 @@ package:
     - ./bin/**
 
 functions:
-  hello:
-    handler: bin/hello
+  createAuction:
+    handler: bin/createAuction
     events:
       - httpApi:
-          path: /hello
-          method: get
+          path: /auction
+          method: POST

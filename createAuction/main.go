@@ -7,6 +7,7 @@ import (
 
 	"github.com/aws/aws-lambda-go/events"
 	"github.com/aws/aws-lambda-go/lambda"
+	"go.uber.org/zap"
 )
 
 // Response is of type APIGatewayProxyResponse since we're leveraging the
@@ -16,11 +17,14 @@ import (
 type Response events.APIGatewayProxyResponse
 
 // Handler is our lambda handler invoked by the `lambda.Start` function call
-func Handler(ctx context.Context) (Response, error) {
+func Handler(ctx context.Context, event events.APIGatewayProxyRequest) (Response, error) {
 	var buf bytes.Buffer
-
+	l, _ := zap.NewProduction()
+	defer l.Sync()
+	l.Info("event received", zap.Any("method", event.HTTPMethod), zap.Any("path", event.Path), zap.Any("body", event.Body))
 	body, err := json.Marshal(map[string]interface{}{
-		"message": "Go Serverless v1.0! Your function executed successfully!",
+		"event":   event,
+		"context": ctx,
 	})
 	if err != nil {
 		return Response{StatusCode: 404}, err
@@ -32,8 +36,8 @@ func Handler(ctx context.Context) (Response, error) {
 		IsBase64Encoded: false,
 		Body:            buf.String(),
 		Headers: map[string]string{
-			"Content-Type":           "application/json",
-			"X-MyCompany-Func-Reply": "hello-handler",
+			"Content-Type": "application/json",
+			"X-Func-Reply": "createAuction",
 		},
 	}
 

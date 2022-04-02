@@ -27,7 +27,11 @@ pipeline {
                 println('Deploying')
                 script {
                     if ( SLS_ACTION == 'deploy' ) {
-                        sh "make deploy"
+                        if ( FUNCTION_NAME == 'all') {
+                            sh "make deploy"
+                        } else {
+                            sh "make deployFunc"
+                        }
                     } else if ( SLS_ACTION == 'remove' ){
                         sh "make remove"
                     } else {

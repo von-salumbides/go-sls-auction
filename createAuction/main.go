@@ -2,8 +2,9 @@ package main
 
 import (
 	"bytes"
-	"context"
 	"encoding/json"
+	"fmt"
+	"log"
 
 	"github.com/aws/aws-lambda-go/events"
 	"github.com/aws/aws-lambda-go/lambda"
@@ -15,21 +16,33 @@ import (
 //
 // https://serverless.com/framework/docs/providers/aws/events/apigateway/#lambda-proxy-integration
 type Response events.APIGatewayV2HTTPResponse
+type Auction struct {
+	Title       string `json:"title"`
+	Status      string `json:"status"`
+	DateCreated string `json:"date_created"`
+}
+
+func ParseResponse(respString string) []byte {
+	b := []byte(respString)
+	var auction Auction
+	err := json.Unmarshal(b, &auction)
+	if err == nil {
+		log.Print(fmt.Sprintf("Title: [%s]", auction.Title))
+	} else {
+		log.Print(fmt.Sprintf("Could not unmarshall JSON string: [%s]", err.Error()))
+	}
+	return b
+}
 
 // Handler is our lambda handler invoked by the `lambda.Start` function call
-func Handler(ctx context.Context, event events.APIGatewayV2HTTPRequest) (Response, error) {
+func Handler(event events.APIGatewayV2HTTPRequest) (Response, error) {
 	var buf bytes.Buffer
 	l, _ := zap.NewProduction()
 	defer l.Sync()
 	l.Info("event received", zap.Any("method", event.RequestContext.HTTP.Method), zap.Any("path", event.RequestContext.HTTP.Path), zap.Any("body", event.Body))
-	body, err := json.Marshal(map[string]interface{}{
-		"event":   event,
-		"context": ctx,
-	})
-	if err != nil {
-		return Response{StatusCode: 404}, err
-	}
-	json.HTMLEscape(&buf, body)
+	respBody := ParseResponse(event.Body)
+	// Response
+	json.HTMLEscape(&buf, respBody)
 
 	resp := Response{
 		StatusCode:      200,

@@ -14,14 +14,14 @@ import (
 // AWS Lambda Proxy Request functionality (default behavior)
 //
 // https://serverless.com/framework/docs/providers/aws/events/apigateway/#lambda-proxy-integration
-type Response events.APIGatewayProxyResponse
+type Response events.APIGatewayV2HTTPResponse
 
 // Handler is our lambda handler invoked by the `lambda.Start` function call
-func Handler(ctx context.Context, event events.APIGatewayProxyRequest) (Response, error) {
+func Handler(ctx context.Context, event events.APIGatewayV2HTTPRequest) (Response, error) {
 	var buf bytes.Buffer
 	l, _ := zap.NewProduction()
 	defer l.Sync()
-	l.Info("event received", zap.Any("method", event.HTTPMethod), zap.Any("path", event.Path), zap.Any("body", event.Body))
+	l.Info("event received", zap.Any("method", event.RequestContext.HTTP.Method), zap.Any("path", event.RequestContext.HTTP.Path), zap.Any("body", event.Body))
 	body, err := json.Marshal(map[string]interface{}{
 		"event":   event,
 		"context": ctx,

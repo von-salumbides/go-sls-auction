@@ -49,8 +49,11 @@ func Handler(ctx context.Context, event events.APIGatewayV2HTTPRequest) (Respons
 	return resp, nil
 }
 
-func main() {
+func init() {
 	logger := zap.L()
 	logger.Sugar().Infow("Starting Lambda Service")
+}
+
+func main() {
 	lambda.Start(Handler)
 }

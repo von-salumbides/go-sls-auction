@@ -3,6 +3,7 @@ package main
 import (
 	"encoding/json"
 	"net/http"
+	"time"
 
 	"github.com/aws/aws-lambda-go/events"
 	"github.com/aws/aws-lambda-go/lambda"
@@ -10,8 +11,9 @@ import (
 )
 
 type Auction struct {
-	Title  string `json:"title"`
-	Status string `json:"status"`
+	Title       string `json:"title"`
+	Status      string `json:"status"`
+	DateCreated string `json:"date_created"`
 }
 
 type HTTPApiResponse events.APIGatewayV2HTTPResponse
@@ -22,7 +24,7 @@ func Handler(request events.APIGatewayV2HTTPRequest) (*HTTPApiResponse, error) {
 	if err != nil {
 		zap.L().Fatal("Error parsing:")
 	}
-
+	auction.DateCreated = time.Now().Format("01-02-2006 15:04:05 Monday")
 	auctionBts, err := json.Marshal(auction)
 	if err != nil {
 		zap.L().Fatal("Error Marshal")

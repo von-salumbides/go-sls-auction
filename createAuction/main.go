@@ -1,7 +1,6 @@
 package main
 
 import (
-	"bytes"
 	"encoding/json"
 
 	"github.com/aws/aws-lambda-go/events"
@@ -34,18 +33,16 @@ func ParseResponse(respString string) []byte {
 
 // Handler is our lambda handler invoked by the `lambda.Start` function call
 func Handler(event events.APIGatewayV2HTTPRequest) (Response, error) {
-	var buf bytes.Buffer
 	l, _ := zap.NewProduction()
 	defer l.Sync()
 	l.Info("event received", zap.Any("method", event.RequestContext.HTTP.Method), zap.Any("path", event.RequestContext.HTTP.Path), zap.Any("body", event.Body))
+
 	respBody := ParseResponse(event.Body)
-	// Response
-	json.HTMLEscape(&buf, respBody)
 
 	resp := Response{
 		StatusCode:      200,
 		IsBase64Encoded: false,
-		Body:            buf.String(),
+		Body:            string(respBody),
 		Headers: map[string]string{
 			"Content-Type": "application/json",
 			"X-Func-Reply": "createAuction",

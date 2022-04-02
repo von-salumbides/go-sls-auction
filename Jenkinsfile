@@ -38,6 +38,7 @@ pipeline {
                         error("Build Failed, ${SLS_ACTION} is not defined")
                     }
                 }
+                currentBuild.displayName = "${SLS_ACTION}-${FUNCTION_NAME}"
             }
         }
     }

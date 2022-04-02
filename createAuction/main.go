@@ -50,8 +50,11 @@ func Handler(ctx context.Context, event events.APIGatewayV2HTTPRequest) (Respons
 }
 
 func init() {
-	logger := zap.L()
-	logger.Sugar().Infow("Starting Lambda Service")
+	logger, err := zap.NewProduction()
+	if err != nil {
+		logger.Fatal("Cannot initialize zap logger")
+	}
+	defer logger.Sync()
 }
 
 func main() {

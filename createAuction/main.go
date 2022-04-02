@@ -2,6 +2,7 @@ package main
 
 import (
 	"encoding/json"
+	"log"
 
 	"github.com/aws/aws-lambda-go/events"
 	"github.com/aws/aws-lambda-go/lambda"
@@ -31,13 +32,20 @@ func ParseResponse(respString string) []byte {
 	return b
 }
 
+var Logger *zap.Logger
+
+func init() {
+	Logger, err := zap.NewProduction()
+	if err != nil {
+		log.Fatalf("Cannot initialize zap logger: %v", Logger)
+	}
+	defer Logger.Sync()
+}
+
 // Handler is our lambda handler invoked by the `lambda.Start` function call
 func Handler(event events.APIGatewayV2HTTPRequest) (Response, error) {
-	l := zap.L()
-	l.Info("event received", zap.Any("method", event.RequestContext.HTTP.Method), zap.Any("path", event.RequestContext.HTTP.Path), zap.Any("body", event.Body))
-
+	Logger.Info("event received", zap.Any("method", event.RequestContext.HTTP.Method), zap.Any("path", event.RequestContext.HTTP.Path), zap.Any("body", event.Body))
 	respBody := ParseResponse(event.Body)
-
 	resp := Response{
 		StatusCode:      200,
 		IsBase64Encoded: false,

@@ -1,56 +1,40 @@
 package main
 
 import (
-	"context"
 	"encoding/json"
+	"log"
+	"net/http"
 
 	"github.com/aws/aws-lambda-go/events"
 	"github.com/aws/aws-lambda-go/lambda"
-	"go.uber.org/zap"
 )
 
-// Response is of type APIGatewayProxyResponse since we're leveraging the
-// AWS Lambda Proxy Request functionality (default behavior)
-//
-// https://serverless.com/framework/docs/providers/aws/events/apigateway/#lambda-proxy-integration
-type Response events.APIGatewayV2HTTPResponse
 type Auction struct {
-	Title       string `json:"title"`
-	Status      string `json:"status"`
-	DateCreated string `json:"date_created"`
+	Title  string `json:"title"`
+	Status string `json:"status"`
 }
 
-func ParseResponse(respString string) []byte {
-	b := []byte(respString)
+type HTTPApiResponse events.APIGatewayV2HTTPResponse
+
+func Handler(request events.APIGatewayV2HTTPRequest) (*HTTPApiResponse, error) {
 	var auction Auction
-	err := json.Unmarshal(b, &auction)
-	if err == nil {
-		zap.L().Info("Unmarshall successfully:", zap.String("Title:", auction.Title))
-	} else {
-		zap.L().Fatal("Could not unmarshall JSON string", zap.Error(err))
-	}
-	return b
-}
-
-// Handler is our lambda handler invoked by the `lambda.Start` function call
-func Handler(ctx context.Context, event events.APIGatewayV2HTTPRequest) (Response, error) {
-	logger, err := zap.NewProduction()
+	err := json.Unmarshal([]byte(request.Body), &auction)
 	if err != nil {
-		logger.Fatal("Cannot initialize zap logger")
+		log.Fatalf("Error parsing: %v", auction)
 	}
-	defer logger.Sync()
-	logger.Info("event received", zap.Any("method", event.RequestContext.HTTP.Method), zap.Any("path", event.RequestContext.HTTP.Path), zap.Any("body", event.Body), zap.Any("ctx", ctx))
-	respBody := ParseResponse(event.Body)
-	resp := Response{
-		StatusCode:      200,
+
+	auctionBts, err := json.Marshal(auction)
+	if err != nil {
+		log.Fatalf("Error marshalling: %v", auctionBts)
+	}
+	resp := &HTTPApiResponse{
+		StatusCode:      http.StatusOK,
 		IsBase64Encoded: false,
-		Body:            string(respBody),
+		Body:            string(auctionBts),
 		Headers: map[string]string{
 			"Content-Type": "application/json",
-			"X-Func-Reply": "createAuction",
 		},
 	}
-
 	return resp, nil
 }
 

@@ -3,6 +3,7 @@ frameworkVersion: '3'
 provider:
   name: aws
   runtime: go1.x
+  memorySize: 256
   stage: ${opt:stage, 'dev'}
   region: us-east-2
 

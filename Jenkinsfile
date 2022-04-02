@@ -26,6 +26,7 @@ pipeline {
             steps {
                 println('Deploying')
                 script {
+                    currentBuild.displayName = "${SLS_ACTION}-${FUNCTION_NAME}"
                     if ( SLS_ACTION == 'deploy' ) {
                         if ( FUNCTION_NAME == 'all') {
                             sh "make deploy"
@@ -38,7 +39,6 @@ pipeline {
                         error("Build Failed, ${SLS_ACTION} is not defined")
                     }
                 }
-                currentBuild.displayName = "${SLS_ACTION}-${FUNCTION_NAME}"
             }
         }
     }

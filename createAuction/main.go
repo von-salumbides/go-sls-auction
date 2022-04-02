@@ -3,8 +3,6 @@ package main
 import (
 	"bytes"
 	"encoding/json"
-	"fmt"
-	"log"
 
 	"github.com/aws/aws-lambda-go/events"
 	"github.com/aws/aws-lambda-go/lambda"
@@ -27,9 +25,9 @@ func ParseResponse(respString string) []byte {
 	var auction Auction
 	err := json.Unmarshal(b, &auction)
 	if err == nil {
-		log.Print(fmt.Sprintf("Title: [%s]", auction.Title))
+		zap.L().Info("Unmarshall successfully:", zap.String("Title:", auction.Title))
 	} else {
-		log.Print(fmt.Sprintf("Could not unmarshall JSON string: [%s]", err.Error()))
+		zap.L().Fatal("Could not unmarshall JSON string", zap.Error(err))
 	}
 	return b
 }

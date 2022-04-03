@@ -7,6 +7,7 @@ import (
 
 	"github.com/aws/aws-lambda-go/events"
 	"github.com/aws/aws-lambda-go/lambda"
+	"github.com/von-salumbides/auction/utils/logger"
 	"go.uber.org/zap"
 )
 
@@ -42,9 +43,7 @@ func Handler(request events.APIGatewayV2HTTPRequest) (*HTTPApiResponse, error) {
 }
 
 func init() {
-	logger, _ := zap.NewProduction()
-	zap.ReplaceGlobals(logger)
-	defer logger.Sync()
+	logger.InitZap()
 }
 
 func main() {

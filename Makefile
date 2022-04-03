@@ -2,7 +2,7 @@
 environment = $(DEPLOY_ENV)
 function_name = $(FUNCTION_NAME)
 build:
-	env GOARCH=amd64 GOOS=linux go build -ldflags="-s -w" -o bin/createAuction createAuction/main.go
+	env GOARCH=amd64 GOOS=linux go build -ldflags="-s -w" -o bin/createAuction cmd/createAuction/main.go
 
 clean:
 	rm -rf ./bin

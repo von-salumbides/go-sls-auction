@@ -9,6 +9,7 @@ provider:
   environment:
     SERVICE: ${self:service}
     STAGE: ${sls:stage}
+    REGION: ${self:provider.region}
 
 # you can define service wide environment variables here
 #  environment:

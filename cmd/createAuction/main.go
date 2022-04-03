@@ -38,7 +38,7 @@ func Handler(request events.APIGatewayV2HTTPRequest) (*HTTPApiResponse, error) {
 			"Content-Type": "application/json",
 		},
 	}
-	zap.L().Info("Event Received", zap.Any("body", request.Body))
+	zap.L().Info("Event Received", zap.Any("body", string(auctionBts)))
 	return resp, nil
 }
 

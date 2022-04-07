@@ -41,6 +41,7 @@ func Handler(request events.APIGatewayV2HTTPRequest) (*httpApi.HTTPApiResponse, 
 	}
 	// tableName for DyanmoDb
 	tableName := os.Getenv("DYNAMODB_TABLE")
+	// PutItem createOrupdate data to Dynamodb
 	putItem := adapter.NewAdapter(svc)
 	_, err = putItem.CreateOrUpdate(item, tableName)
 	if err != nil {

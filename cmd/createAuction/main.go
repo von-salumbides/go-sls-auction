@@ -7,38 +7,50 @@ import (
 
 	"github.com/aws/aws-lambda-go/events"
 	"github.com/aws/aws-lambda-go/lambda"
+	"github.com/von-salumbides/auction/internal/models"
+	httpApi "github.com/von-salumbides/auction/utils/http"
 	"github.com/von-salumbides/auction/utils/logger"
 	"go.uber.org/zap"
 )
 
-type Auction struct {
-	Title       string `json:"title"`
-	Status      string `json:"status"`
-	DateCreated string `json:"date_created"`
-}
+func Handler(request events.APIGatewayV2HTTPRequest) (*httpApi.HTTPApiResponse, error) {
 
-type HTTPApiResponse events.APIGatewayV2HTTPResponse
+	// itemString unmarshal to Auction to access object properties
+	itemString := request.Body
+	itemStruct := models.Auction{}
+	err := json.Unmarshal([]byte(itemString), &itemStruct)
+	if err != nil {
+		zap.L().Fatal("Error parsing", zap.Any("error", err.Error()))
+		return &httpApi.HTTPApiResponse{
+			StatusCode: http.StatusInternalServerError,
+		}, err
+	}
 
-func Handler(request events.APIGatewayV2HTTPRequest) (*HTTPApiResponse, error) {
-	var auction Auction
-	err := json.Unmarshal([]byte(request.Body), &auction)
-	if err != nil {
-		zap.L().Fatal("Error parsing:")
+	// create of new item of type Auction
+	itemTime := time.Now().Format("01-02-2006 15:04:05 Monday")
+	item := models.Auction{
+		Title:       itemStruct.Title,
+		Status:      itemStruct.Status,
+		DateCreated: itemTime,
 	}
-	auction.DateCreated = time.Now().Format("01-02-2006 15:04:05 Monday")
-	auctionBts, err := json.Marshal(auction)
+
+	// marshal item
+	av, err := json.Marshal(item)
 	if err != nil {
-		zap.L().Fatal("Error Marshal")
+		zap.L().Fatal("Error marshalling item", zap.Any("error", err.Error()))
+		return &httpApi.HTTPApiResponse{
+			StatusCode: http.StatusInternalServerError,
+		}, err
 	}
-	resp := &HTTPApiResponse{
+
+	resp := &httpApi.HTTPApiResponse{
 		StatusCode:      http.StatusOK,
 		IsBase64Encoded: false,
-		Body:            string(auctionBts),
+		Body:            string(av),
 		Headers: map[string]string{
 			"Content-Type": "application/json",
 		},
 	}
-	zap.L().Info("Event Received", zap.Any("body", string(auctionBts)))
 	return resp, nil
 }
 

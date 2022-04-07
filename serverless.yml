@@ -10,6 +10,7 @@ provider:
     SERVICE: ${self:service}
     STAGE: ${sls:stage}
     REGION: ${self:provider.region}
+    DYNAMODB_TABLE: ${self:service}-table-${sls:stage}
 
 # you can define service wide environment variables here
 #  environment:

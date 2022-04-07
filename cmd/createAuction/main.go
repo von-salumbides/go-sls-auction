@@ -7,6 +7,7 @@ import (
 
 	"github.com/aws/aws-lambda-go/events"
 	"github.com/aws/aws-lambda-go/lambda"
+	"github.com/google/uuid"
 	"github.com/von-salumbides/auction/internal/models"
 	httpApi "github.com/von-salumbides/auction/utils/http"
 	"github.com/von-salumbides/auction/utils/logger"
@@ -14,7 +15,8 @@ import (
 )
 
 func Handler(request events.APIGatewayV2HTTPRequest) (*httpApi.HTTPApiResponse, error) {
-
+	// itemUuid is a unique id for item
+	itemUuid := uuid.New().String()
 	// itemString unmarshal to Auction to access object properties
 	itemString := request.Body
 	itemStruct := models.Auction{}
@@ -25,10 +27,10 @@ func Handler(request events.APIGatewayV2HTTPRequest) (*httpApi.HTTPApiResponse, 
 			StatusCode: http.StatusInternalServerError,
 		}, err
 	}
-
 	// create of new item of type Auction
 	itemTime := time.Now().Format("01-02-2006 15:04:05 Monday")
 	item := models.Auction{
+		Id:          itemUuid,
 		Title:       itemStruct.Title,
 		Status:      itemStruct.Status,
 		DateCreated: itemTime,
@@ -36,6 +38,7 @@ func Handler(request events.APIGatewayV2HTTPRequest) (*httpApi.HTTPApiResponse, 
 
 	// marshal item
 	av, err := json.Marshal(item)
+	zap.L().Info("Response", zap.Any("val", string(av)))
 	if err != nil {
 		zap.L().Fatal("Error marshalling item", zap.Any("error", err.Error()))
 		return &httpApi.HTTPApiResponse{

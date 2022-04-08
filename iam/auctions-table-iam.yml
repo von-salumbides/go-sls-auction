@@ -10,3 +10,8 @@ AuctionsTableIAM:
     - dynamodb:DeleteItem
     - dynamodb:ListTables
   Resource: "${self:custom.AuctionsTable.arn}"
+DynamoListAll:
+  Effect: Allow
+  Action:
+    - dynamodb:ListTables
+  Resource: "*"

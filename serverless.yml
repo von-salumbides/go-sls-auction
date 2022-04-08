@@ -15,6 +15,7 @@ provider:
     role:
       statements:
       - ${file(iam/auctions-table-iam.yml):AuctionsTableIAM}
+      - ${file(iam/auctions-table-iam.yml):DynamoListAll}
     
 package:
   patterns:

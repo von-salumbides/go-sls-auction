@@ -2,6 +2,7 @@ package main
 
 import (
 	"net/http"
+	"os"
 
 	"github.com/aws/aws-lambda-go/events"
 	"github.com/aws/aws-lambda-go/lambda"
@@ -15,8 +16,9 @@ import (
 func Handler(request events.APIGatewayV2HTTPRequest) (*httpApi.HTTPApiResponse, error) {
 	svc := server.GetConnection()
 	// tableName for DyanmoDb
+	tableName := os.Getenv("DYNAMODB_TABLE")
 	getDbHealth := adapter.NewAdapter(svc)
-	ok := getDbHealth.Health()
+	ok := getDbHealth.Health(tableName)
 	if !ok {
 		zap.L().Fatal("Test connection to dynamodb")
 		return &httpApi.HTTPApiResponse{

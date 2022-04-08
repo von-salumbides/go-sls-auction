@@ -10,7 +10,7 @@ provider:
     SERVICE: ${self:service}
     STAGE: ${sls:stage}
     REGION: ${self:provider.region}
-    DYNAMODB_TABLE: ${custom:AuctionsTable.name}
+    DYNAMODB_TABLE: ${self:custom.AuctionsTable.name}
   iam:
     role:
       statements:

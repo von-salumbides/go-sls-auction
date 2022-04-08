@@ -31,4 +31,4 @@ resources:
 custom:
   AuctionsTable:
     name: !Ref AuctionsTable
-    arn: !GetAttr AuctionsTable.Arn
+    arn: !GetAtt AuctionsTable.Arn

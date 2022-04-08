@@ -14,4 +14,4 @@ deployFunc: clean build
 	sls deploy -f $(function_name) --stage=$(environment) --verbose
 
 remove: 
-	sls remove --stage=$(environment)
+	sls remove --stage=$(environment) --verbose

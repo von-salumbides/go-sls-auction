@@ -21,6 +21,7 @@ func Handler(request events.APIGatewayV2HTTPRequest) (*httpApi.HTTPApiResponse, 
 	svc := server.GetConnection()
 	// itemUuid is a unique id for item
 	itemUuid := uuid.New().String()
+
 	// itemString unmarshal to Auction to access object properties
 	itemString := request.Body
 	itemStruct := models.Auction{}
@@ -31,6 +32,7 @@ func Handler(request events.APIGatewayV2HTTPRequest) (*httpApi.HTTPApiResponse, 
 			StatusCode: http.StatusInternalServerError,
 		}, err
 	}
+
 	// create of new item of type Auction
 	itemTime := time.Now().Format("01-02-2006 15:04:05 Monday")
 	item := models.Auction{
@@ -41,6 +43,7 @@ func Handler(request events.APIGatewayV2HTTPRequest) (*httpApi.HTTPApiResponse, 
 	}
 	// tableName for DyanmoDb
 	tableName := os.Getenv("DYNAMODB_TABLE")
+
 	// PutItem createOrupdate data to Dynamodb
 	putItem := adapter.NewAdapter(svc)
 	_, err = putItem.CreateOrUpdate(item, tableName)
@@ -60,6 +63,7 @@ func Handler(request events.APIGatewayV2HTTPRequest) (*httpApi.HTTPApiResponse, 
 		}, err
 	}
 
+	// resp build the response to client
 	resp := &httpApi.HTTPApiResponse{
 		StatusCode:      http.StatusOK,
 		IsBase64Encoded: false,

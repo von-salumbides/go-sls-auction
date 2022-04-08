@@ -22,7 +22,7 @@ package:
     - ./bin/**
 
 functions:
-  dbHealth: ${file(cmd/dbHealth/dbhealth.yml):dbHealth}
+  dbHealth: ${file(cmd/dbhealth/dbhealth.yml):dbHealth}
   createAuction: ${file(cmd/createAuction/create-auction.yml):createAuction}
 
 resources:

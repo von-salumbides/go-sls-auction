@@ -11,8 +11,10 @@ provider:
     STAGE: ${sls:stage}
     REGION: ${self:provider.region}
     DYNAMODB_TABLE: ${self:service}-table-${sls:stage}
-  iamRolesStatements:
-    - ${file(iam/auctions-table-iam.yml):AuctionsTableIAM}
+  iam:
+    role:
+      statements:
+      - ${file(iam/auctions-table-iam.yml):AuctionsTableIAM}
     
 package:
   patterns:

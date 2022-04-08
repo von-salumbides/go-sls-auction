@@ -12,7 +12,7 @@ type Database struct {
 }
 
 type Interface interface {
-	Health(tableName string) bool
+	Health(tableName string) (bool, error)
 	CreateOrUpdate(entity interface{}, tableName string) (*dynamodb.PutItemOutput, error)
 }
 
@@ -24,11 +24,14 @@ func NewAdapter(con *dynamodb.DynamoDB) Interface {
 }
 
 // Health check for Dynamodb
-func (db *Database) Health(tableName string) bool {
+func (db *Database) Health(tableName string) (bool, error) {
 	_, err := db.connection.ListTables(&dynamodb.ListTablesInput{
 		ExclusiveStartTableName: &tableName,
 	})
-	return err == nil
+	if err != nil {
+		return false, err
+	}
+	return true, nil
 }
 
 // CreateOrUpdate PUT data to dynamodb

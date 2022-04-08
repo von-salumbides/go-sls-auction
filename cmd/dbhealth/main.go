@@ -18,9 +18,9 @@ func Handler(request events.APIGatewayV2HTTPRequest) (*httpApi.HTTPApiResponse, 
 	// tableName for DyanmoDb
 	tableName := os.Getenv("DYNAMODB_TABLE")
 	getDbHealth := adapter.NewAdapter(svc)
-	ok := getDbHealth.Health(tableName)
-	if !ok {
-		zap.L().Fatal("Test connection to dynamodb")
+	_, err := getDbHealth.Health(tableName)
+	if err != nil {
+		zap.L().Fatal("Test connection to dynamodb", zap.Any("error", err.Error()))
 		return &httpApi.HTTPApiResponse{
 			StatusCode: http.StatusInternalServerError,
 		}, nil

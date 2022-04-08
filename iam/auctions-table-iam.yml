@@ -8,4 +8,4 @@ AuctionsTableIAM:
     - dynamodb:PutItem
     - dynamodb:UpdateItem
     - dynamodb:DeleteItem
-  Resource: "arn:aws:dynamodb:${opt:region, self:provider.region}:*:table/${custom:AuctionsTable.name}"
+  Resource: "${custom:AuctionsTable.arn}"

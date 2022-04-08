@@ -25,9 +25,9 @@ func Handler(request events.APIGatewayV2HTTPRequest) (*httpApi.HTTPApiResponse, 
 			StatusCode: http.StatusInternalServerError,
 		}, nil
 	}
-
 	return &httpApi.HTTPApiResponse{
 		StatusCode: http.StatusOK,
+		Body:       "{\"healthy\":\"ok\"}",
 	}, nil
 }
 

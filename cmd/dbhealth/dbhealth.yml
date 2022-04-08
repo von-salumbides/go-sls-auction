@@ -1,0 +1,7 @@
+---
+dbHealth:
+  handler: bin/dbHealth
+  events:
+    - httpApi:
+        path: /dbhealth
+        method: GET

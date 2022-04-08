@@ -22,6 +22,7 @@ package:
     - ./bin/**
 
 functions:
+  dbHealth: ${file(cmd/dbHealth/dbhealth.yml):dbHealth}
   createAuction: ${file(cmd/createAuction/create-auction.yml):createAuction}
 
 resources:
@@ -31,4 +32,4 @@ resources:
 custom:
   AuctionsTable:
     name: !Ref AuctionsTable
-    arn: !GetAtt AuctionsTable.Arn
+    arn: !GetAtt AuctionsTable.Arn 

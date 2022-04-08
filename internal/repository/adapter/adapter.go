@@ -14,6 +14,7 @@ type Database struct {
 type Interface interface {
 	Health(tableName string) (bool, error)
 	CreateOrUpdate(entity interface{}, tableName string) (*dynamodb.PutItemOutput, error)
+	GetAll(tableName string) (*dynamodb.ScanOutput, error)
 }
 
 // NewAdapter creates new Dynamodb adapter
@@ -48,4 +49,11 @@ func (db *Database) CreateOrUpdate(entity interface{}, tableName string) (*dynam
 		TableName: aws.String(tableName),
 	}
 	return db.connection.PutItem(input)
+}
+
+func (db *Database) GetAll(tableName string) (*dynamodb.ScanOutput, error) {
+	params := &dynamodb.ScanInput{
+		TableName: aws.String(tableName),
+	}
+	return db.connection.Scan(params)
 }

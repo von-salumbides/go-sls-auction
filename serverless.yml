@@ -10,7 +10,7 @@ provider:
     SERVICE: ${self:service}
     STAGE: ${sls:stage}
     REGION: ${self:provider.region}
-    DYNAMODB_TABLE: ${self:service}-table-${sls:stage}
+    DYNAMODB_TABLE: ${custom:AuctionsTable.arn}
   iam:
     role:
       statements:
@@ -27,3 +27,8 @@ functions:
 resources:
   Resources:
     AuctionsTable: ${file(resources/auctions-table.yml):AuctionsTable}
+
+custom:
+  AuctionsTable:
+    name: !Ref AuctionsTable
+    arn: !GetAttr AuctionsTable.Arn

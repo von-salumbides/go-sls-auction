@@ -1,0 +1,7 @@
+---
+createAuction:
+  handler: bin/createAuction
+  events:
+    - httpApi:
+        path: /auction
+        method: POST

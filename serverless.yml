@@ -22,12 +22,7 @@ package:
     - ./bin/**
 
 functions:
-  createAuction:
-    handler: bin/createAuction
-    events:
-      - httpApi:
-          path: /auction
-          method: POST
+  createAuction: ${file(cmd/createAuction/create-auction.yml):createAuction}
 
 resources:
   Resources:

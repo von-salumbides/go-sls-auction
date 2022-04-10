@@ -1,0 +1,7 @@
+---
+getAuction:
+  handler: bin/getAuction
+  events:
+    - httpApi:
+        path: /auction/{id}
+        method: GET

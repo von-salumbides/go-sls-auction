@@ -25,7 +25,8 @@ package:
 functions:
   dbHealth: ${file(cmd/dbhealth/dbhealth.yml):dbHealth}
   createAuction: ${file(cmd/createAuction/create-auction.yml):createAuction}
-  getAuctions: ${file(cmd/getAuctions/get-auction.yml):getAuctions}
+  getAuctions: ${file(cmd/getAuctions/get-auctions.yml):getAuctions}
+  getAuction: ${file(cmd/getAuction/get-auction.yml):getAuction}
 
 resources:
   Resources:

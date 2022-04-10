@@ -4,7 +4,7 @@ import (
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/service/dynamodb"
 	"github.com/aws/aws-sdk-go/service/dynamodb/dynamodbattribute"
-	"go.uber.org/zap"
+	"github.com/von-salumbides/auction/utils/logger"
 )
 
 type Database struct {
@@ -15,6 +15,7 @@ type Interface interface {
 	Health(tableName string) (bool, error)
 	CreateOrUpdate(entity interface{}, tableName string) (*dynamodb.PutItemOutput, error)
 	GetAll(tableName string) (*dynamodb.ScanOutput, error)
+	Get(pathParam string, tableName string) (*dynamodb.GetItemOutput, error)
 }
 
 // NewAdapter creates new Dynamodb adapter
@@ -40,7 +41,7 @@ func (db *Database) CreateOrUpdate(entity interface{}, tableName string) (*dynam
 	// entity parsed
 	entityParsed, err := dynamodbattribute.MarshalMap(entity)
 	if err != nil {
-		zap.L().Fatal("Marshal failure", zap.Any("error", err.Error()))
+		logger.ERROR("Marshal failure", err.Error())
 		return nil, err
 	}
 	// Build input item
@@ -56,4 +57,20 @@ func (db *Database) GetAll(tableName string) (*dynamodb.ScanOutput, error) {
 		TableName: aws.String(tableName),
 	}
 	return db.connection.Scan(params)
+}
+
+func (db *Database) Get(pathParam string, tableName string) (*dynamodb.GetItemOutput, error) {
+	input := &dynamodb.GetItemInput{
+		TableName: &tableName,
+		Key: map[string]*dynamodb.AttributeValue{
+			"id": {
+				S: aws.String(pathParam),
+			},
+		},
+	}
+	request, err := db.connection.GetItem(input)
+	if err != nil {
+		logger.ERROR("Get item failed", err.Error())
+	}
+	return request, nil
 }

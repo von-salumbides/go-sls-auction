@@ -1,7 +1,6 @@
 package main
 
 import (
-	"net/http"
 	"os"
 
 	"github.com/aws/aws-lambda-go/events"
@@ -10,7 +9,6 @@ import (
 	"github.com/von-salumbides/auction/internal/server"
 	httpApi "github.com/von-salumbides/auction/utils/http"
 	"github.com/von-salumbides/auction/utils/logger"
-	"go.uber.org/zap"
 )
 
 func Handler(request events.APIGatewayV2HTTPRequest) (*httpApi.HTTPApiResponse, error) {
@@ -20,15 +18,10 @@ func Handler(request events.APIGatewayV2HTTPRequest) (*httpApi.HTTPApiResponse, 
 	getDbHealth := adapter.NewAdapter(svc)
 	_, err := getDbHealth.Health(tableName)
 	if err != nil {
-		zap.L().Fatal("Test connection to dynamodb", zap.Any("error", err.Error()))
-		return &httpApi.HTTPApiResponse{
-			StatusCode: http.StatusInternalServerError,
-		}, nil
+		logger.ERROR("Test connection to dynamodb", err.Error())
+		return httpApi.ERRORInternalServer(), err
 	}
-	return &httpApi.HTTPApiResponse{
-		StatusCode: http.StatusOK,
-		Body:       "{\"healthy\":\"ok\"}",
-	}, nil
+	return httpApi.OKResponse("{\"healthy\":\"ok\"}"), nil
 }
 
 func init() {

@@ -2,7 +2,6 @@ package main
 
 import (
 	"encoding/json"
-	"net/http"
 	"os"
 	"time"
 
@@ -27,10 +26,8 @@ func Handler(request events.APIGatewayV2HTTPRequest) (*httpApi.HTTPApiResponse, 
 	itemStruct := models.Auction{}
 	err := json.Unmarshal([]byte(itemString), &itemStruct)
 	if err != nil {
-		zap.L().Fatal("Error parsing", zap.Any("error", err.Error()))
-		return &httpApi.HTTPApiResponse{
-			StatusCode: http.StatusInternalServerError,
-		}, err
+		logger.ERROR("Error parsing request body", err.Error())
+		return httpApi.ERRORInternalServer(), err
 	}
 
 	// create of new item of type Auction
@@ -48,30 +45,19 @@ func Handler(request events.APIGatewayV2HTTPRequest) (*httpApi.HTTPApiResponse, 
 	putItem := adapter.NewAdapter(svc)
 	_, err = putItem.CreateOrUpdate(item, tableName)
 	if err != nil {
-		zap.L().Fatal("Got error calling put item", zap.Any("error", err.Error()))
-		return &httpApi.HTTPApiResponse{
-			StatusCode: http.StatusInternalServerError,
-		}, err
+		logger.ERROR("Got error calling put item", err.Error())
+		return httpApi.ERRORInternalServer(), err
 	}
 	// marshal item
 	av, err := json.Marshal(item)
-	zap.L().Info("Response", zap.Any("val", string(av)))
+	logger.INFO("Response", zap.Any("value", av))
 	if err != nil {
-		zap.L().Fatal("Error marshalling item", zap.Any("error", err.Error()))
-		return &httpApi.HTTPApiResponse{
-			StatusCode: http.StatusInternalServerError,
-		}, err
+		logger.ERROR("Error marshalling item", err.Error())
+		return httpApi.ERRORInternalServer(), err
 	}
 
 	// resp build the response to client
-	resp := &httpApi.HTTPApiResponse{
-		StatusCode:      http.StatusOK,
-		IsBase64Encoded: false,
-		Body:            string(av),
-		Headers: map[string]string{
-			"Content-Type": "application/json",
-		},
-	}
+	resp := httpApi.OKResponse(string(av))
 	return resp, nil
 }
 

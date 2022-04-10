@@ -2,7 +2,6 @@ package main
 
 import (
 	"encoding/json"
-	"net/http"
 	"os"
 
 	"github.com/aws/aws-lambda-go/events"
@@ -22,10 +21,8 @@ func Handler(request events.APIGatewayV2HTTPRequest) (*httpApi.HTTPApiResponse, 
 	getAll := adapter.NewAdapter(svc)
 	tableData, err := getAll.GetAll(tableName)
 	if err != nil {
-		zap.L().Fatal("Scan API call failed", zap.Any("error", err.Error()))
-		return &httpApi.HTTPApiResponse{
-			StatusCode: http.StatusInternalServerError,
-		}, err
+		logger.ERROR("Scan API call failed", err.Error())
+		return httpApi.ERRORInternalServer(), err
 	}
 
 	itemArray := []models.Auction{}
@@ -33,26 +30,19 @@ func Handler(request events.APIGatewayV2HTTPRequest) (*httpApi.HTTPApiResponse, 
 		item := models.Auction{}
 		err := dynamodbattribute.UnmarshalMap(i, &item)
 		if err != nil {
-			zap.L().Fatal("Got error unmarshalling", zap.Any("error", err.Error()))
-			return &httpApi.HTTPApiResponse{
-				StatusCode: http.StatusInternalServerError,
-			}, err
+			logger.ERROR("Got error unmarshalling", err.Error())
+			return httpApi.ERRORInternalServer(), err
 		}
 		itemArray = append(itemArray, item)
 	}
-	zap.L().Info("Succesfully unmarshal item", zap.Any("itemArray", itemArray))
+	logger.INFO("Succesfully unmarshal item", zap.Any("items", itemArray))
 	itemArrayString, err := json.Marshal(itemArray)
 	if err != nil {
-		zap.L().Fatal("Got error marshalling result", zap.Any("error", err.Error()))
-		return &httpApi.HTTPApiResponse{
-			StatusCode: http.StatusInternalServerError,
-		}, err
+		logger.ERROR("Got error marshalling result", err.Error())
+		return httpApi.ERRORInternalServer(), err
 	}
 
-	return &httpApi.HTTPApiResponse{
-		StatusCode: http.StatusOK,
-		Body:       string(itemArrayString),
-	}, nil
+	return httpApi.OKResponse(string(itemArrayString)), nil
 }
 
 func init() {

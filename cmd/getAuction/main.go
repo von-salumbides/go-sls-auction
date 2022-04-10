@@ -13,6 +13,7 @@ import (
 	"github.com/von-salumbides/auction/internal/server"
 	httpApi "github.com/von-salumbides/auction/utils/http"
 	"github.com/von-salumbides/auction/utils/logger"
+	"go.uber.org/zap"
 )
 
 func Handler(request events.APIGatewayV2HTTPRequest) (*httpApi.HTTPApiResponse, error) {
@@ -44,6 +45,7 @@ func Handler(request events.APIGatewayV2HTTPRequest) (*httpApi.HTTPApiResponse, 
 		logger.ERROR("Failed to Marshal", err.Error())
 		return httpApi.ERRORInternalServer(), err
 	}
+	logger.INFO("Success", zap.Any("item", string(marshalledItem)))
 	return httpApi.OKResponse(string(marshalledItem)), nil
 }
 

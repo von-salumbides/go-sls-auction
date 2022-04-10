@@ -1,5 +1,5 @@
 ---
-getAuction:
+gettAuction:
   handler: bin/getAuction
   events:
     - httpApi:
